@@ -1,6 +1,6 @@
 from aiogram import F, Router, html
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 import json
 import random
@@ -204,7 +204,7 @@ async def command_create_second_stage(message: Message, state: FSMContext):
     await message.answer(
         f"Your new Mevengi:\n"
         f"Name: {mevengi.name}\n"
-        f"Age: {mevengi.level}\n"
+        f"Level: {mevengi.level}\n"
         f"Money: {mevengi.money}\n"
         f"Satiety: {mevengi.satiety}\n"
         f"Happiness: {mevengi.happiness}\nHygiene status: {data[chat_id]['hygiene_status']}\n\nUse /help to see list of commands to interact with it XD"
@@ -274,7 +274,33 @@ async def name_change_request(message: Message, state: FSMContext):
     if chat_id not in mevengi_data:
         await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
         return
+    
+    if int(mevengi_data[chat_id]['money']) <= 200:
+        await message.answer(f"Change of the name costs $200. Your balance is ${int(mevengi_data[chat_id]['money'])}. It's not enough!")
+        return
+    
+    await message.answer(f"Change of the name costs $200. If you are willing to do that use /confirm_change!")
 
+
+@router.message(Command('confirm_change'))
+async def name_change_request(message: Message, state: FSMContext):
+    chat_id = str(message.chat.id)
+    mevengi_data = load_data()
+
+    if chat_id not in mevengi_data:
+        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
+        return
+    
+    await update_satiety_and_hygiene(message, True)
+    mevengi_data = load_data()
+
+    if int(mevengi_data[chat_id]['money']) <= 200:
+        await message.answer(f"Change of the name costs $200. Your balance is ${int(mevengi_data[chat_id]['money'])}. It's not enough!")
+        return
+    
+    new_money = int(mevengi_data[chat_id]['money']) - 200
+    mevengi_data[chat_id]['money'] = str(new_money)
+    save_data(mevengi_data)
     await state.set_state(NameChange.new_name)
     await message.answer("Enter new name")
 
@@ -378,10 +404,18 @@ async def petting(message: Message):
     save_data(mevengi_data)
 
     if mevengi_data[chat_id]['hygiene_number'] > 100:
-       mevengi_data[chat_id]['hygiene_number'] = 100  
+       mevengi_data[chat_id]['hygiene_number'] = 100 
 
-    await update_satiety_and_hygiene(message, True)
-    mevengi_data = load_data()
+    if 80 <= mevengi_data[chat_id]['hygiene_number'] <= 100:
+          mevengi_data[chat_id]['hygiene_status'] = 'Perfectly clean'
+    elif 60 <= mevengi_data[chat_id]['hygiene_number'] < 80:
+          mevengi_data[chat_id]['hygiene_status'] = 'Good'
+    elif 40 <= mevengi_data[chat_id]['hygiene_number'] < 60:
+          mevengi_data[chat_id]['hygiene_status'] = 'A bit sweaty'
+    elif 20 <= mevengi_data[chat_id]['hygiene_number'] < 40:
+          mevengi_data[chat_id]['hygiene_status'] = 'Stinks'
+    else:
+          mevengi_data[chat_id]['hygiene_status'] = 'Horrible'
 
     await message.answer(f"You washed your Mevengi! Now it's hygiene status is: {mevengi_data[chat_id]['hygiene_status']}.")
     

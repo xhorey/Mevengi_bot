@@ -8,16 +8,16 @@
     },
     "-5125942431": {
         "id": "-5125942431",
-        "name": "Beiba",
-        "level": 0,
-        "money": "40",
-        "level_up": "60",
-        "satiety": 105.60017380714417,
+        "name": "HAHAHAHA",
+        "level": 2,
+        "money": "0",
+        "level_up": "0",
+        "satiety": 41.22014022270838,
         "happiness": 100,
-        "last_update": 1772261436.0561671,
+        "last_update": 1772301584.1260056,
         "hygiene_status": "Perfectly clean",
-        "hygiene_number": 97.80008690357208,
-        "casino_locker": true,
-        "tap_tap_lvl": 2
+        "hygiene_number": 95.6100701113542,
+        "casino_locker": false,
+        "tap_tap_lvl": 5
     }
 }

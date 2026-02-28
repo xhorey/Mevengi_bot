@@ -12,7 +12,7 @@ class Mevengi:
         self.id = mevengi_id
         self.name = name
         self.last_update = last_update
-        self.level = 0
+        self.level = 1
         self.money = 100
         self.level_up = 0
         self.satiety = 50
