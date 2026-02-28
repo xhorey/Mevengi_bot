@@ -1,0 +1,23 @@
+{
+    "-5262734939": {
+        "id": "-5262734939",
+        "name": "Gege",
+        "age": 1,
+        "money": "110",
+        "level_up": "0"
+    },
+    "-5125942431": {
+        "id": "-5125942431",
+        "name": "Beiba",
+        "level": 0,
+        "money": "40",
+        "level_up": "60",
+        "satiety": 105.60017380714417,
+        "happiness": 100,
+        "last_update": 1772261436.0561671,
+        "hygiene_status": "Perfectly clean",
+        "hygiene_number": 97.80008690357208,
+        "casino_locker": true,
+        "tap_tap_lvl": 2
+    }
+}
