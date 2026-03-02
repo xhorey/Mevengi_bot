@@ -1,16 +1,17 @@
 from aiogram import F, Router, html
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 import json
 import random
 import time
 
-from app.classes import Mevengi, Creation, NameChange, NumberGuess, PaperScissorsRock, TapUpgrade
+from app.classes import NumberGuess, PaperScissorsRock
 
 
+router_casino = Router()
 
-
+file_path = "app/data.json"
 
 
 #CASINO FUNCTIONS
@@ -50,11 +51,6 @@ def choice_psr():
      elif number ==3:
           print("rock")
           return "rock"
-     
-
-
-
-
 
 #DATA FUNCTIONS
 
@@ -116,316 +112,15 @@ async def update_satiety_and_hygiene(message: Message, is_bathing):
      
      save_data(mevengi_data)
 
-     
 
-#!!! PRICE !!!
 
-def find_price(message:Message):
-     mevengi_data = load_data()
-     chat_id = str(message.chat.id)
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 1:
-          return 200
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 2:
-          return 500
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 3:
-          return 2500
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 4:
-          return 5000
-     
 
-#REST OF STUFF
 
-router = Router()
-
-file_path = "app/data.json"
-
-  
-
-
-#!!! CREATION !!!
-
-@router.message(CommandStart())
-async def command_start(message: Message):
-    chat_id = str(message.chat.id)
-    data = load_data()
-
-    if chat_id in data:
-        await message.answer("This chat already has a Mevengi.")
-    else:
-        await message.answer(
-            f"Hello, {html.bold(message.from_user.full_name)}!\n"
-            "Create a Mevengi for this chat using /create"
-        )
-
-@router.message(Command('create'))
-async def command_create(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    data = load_data()
-        
-    if chat_id in data:
-        await message.answer("Seems like you already have mevengi, use commands to interact with it =). For command list use /help if you need.")
-    else:
-        await state.set_state(Creation.name)
-        await message.answer("Type in new Mevengi name")
-    
-
-@router.message(Creation.name)
-async def command_create_second_stage(message: Message, state: FSMContext):
-    await state.update_data(name = message.text)
-    chat_id = str(message.chat.id)
-    fsm_data = await state.get_data()
-
-    mevengi = Mevengi(
-        name=fsm_data["name"],
-        mevengi_id=chat_id,
-        last_update = time.time()
-    )
-
-    data = load_data()
-
-    data[chat_id] = {
-        "id": mevengi.id,
-        "name": mevengi.name,
-        "level": mevengi.level,
-        "money": mevengi.money,
-        "level_up": mevengi.level_up,
-        "satiety": mevengi.satiety,
-        "happiness": mevengi.happiness,
-        "last_update": mevengi.last_update,
-        "hygiene_status": 'Perfectly clean',
-        "hygiene_number": 100,
-        "casino_locker": True,
-        "tap_tap_lvl": 1
-
-    }
-
-    save_data(data)
-
-    await message.answer(
-        f"Your new Mevengi:\n"
-        f"Name: {mevengi.name}\n"
-        f"Level: {mevengi.level}\n"
-        f"Money: {mevengi.money}\n"
-        f"Satiety: {mevengi.satiety}\n"
-        f"Happiness: {mevengi.happiness}\nHygiene status: {data[chat_id]['hygiene_status']}\n\nUse /help to see list of commands to interact with it XD"
-    )
-
-    await state.clear()
-
-
-    
-
-@router.message(Command("delete"))
-async def delete_mevengi(message: Message):
-    data = load_data()
-    data.pop(str(message.chat.id), None)
-    save_data(data)
-    print('Successfully deleted! You\'ve just killed innocent animal! Good job!')
-
-
-
-
-#!!! STATS !!!
-
-@router.message(Command('stats'))
-async def show_stats(message: Message):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()
-
-
-
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-
-    await update_satiety_and_hygiene(message, False)
-    mevengi_data = load_data()
-
-    await message.answer(
-        f"Your Mevengi:\n"
-        f"Name: {mevengi_data[chat_id]['name']}\n"
-        f"Level: {mevengi_data[chat_id]['level']}\n"
-        f"Balance: ${mevengi_data[chat_id]['money']}\n"
-        f"Satiety: {int(mevengi_data[chat_id]['satiety'])}\n"
-        f"Happiness: {mevengi_data[chat_id]['happiness']}\nHygiene status: {mevengi_data[chat_id]['hygiene_status']}\nTap-tap level: {mevengi_data[chat_id]['tap_tap_lvl']}"
-    )
-
-
-@router.message(F.text == 'Hi')
-async def how_are_you(message: Message):
-    await message.answer("Hello UwU")
-
-
-#!!! HELP COMMAND !!!
-
-@router.message(Command('help'))
-async def command_help(message: Message):
-        await message.answer(f"Here is the list of commands:\n\n/stats - shows you statistic of your mevengi.\n/feed - used to feed your mevengi.\n/casino - shows you a list of commands for casino.\n/change_name - allows you to change your mevengi's name.\n/tap_tap - get easy money.\n/pet - pet Mevengi and make him happier.")
-
-
-
-#!!! NAME CHANGE !!!
-
-@router.message(Command('change_name'))
-async def name_change_request(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()
-
-    if chat_id not in mevengi_data:
-        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
-        return
-    
-    if int(mevengi_data[chat_id]['money']) <= 200:
-        await message.answer(f"Change of the name costs $200. Your balance is ${int(mevengi_data[chat_id]['money'])}. It's not enough!")
-        return
-    
-    await message.answer(f"Change of the name costs $200. If you are willing to do that use /confirm_change!")
-
-
-@router.message(Command('confirm_change'))
-async def name_change_request(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()
-
-    if chat_id not in mevengi_data:
-        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
-        return
-    
-    await update_satiety_and_hygiene(message, True)
-    mevengi_data = load_data()
-
-    if int(mevengi_data[chat_id]['money']) <= 200:
-        await message.answer(f"Change of the name costs $200. Your balance is ${int(mevengi_data[chat_id]['money'])}. It's not enough!")
-        return
-    
-    new_money = int(mevengi_data[chat_id]['money']) - 200
-    mevengi_data[chat_id]['money'] = str(new_money)
-    save_data(mevengi_data)
-    await state.set_state(NameChange.new_name)
-    await message.answer("Enter new name")
-
-@router.message(NameChange.new_name)
-async def change_name(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()
-    await state.update_data(new_name=message.text)
-    fsm_data = await state.get_data()
-    mevengi_data[chat_id]['name'] = fsm_data['new_name']
-    save_data(mevengi_data)
-    await message.answer("You successfully changed your mevengi's name!")
-    await state.clear()
-
-
-
-#!!! FEED !!!
-
-@router.message(Command('feed'))
-async def show_stats(message: Message):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()
-
-    
-    if chat_id not in mevengi_data:
-        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
-        return
-
-    if mevengi_data[chat_id]['satiety'] >= 100:
-        await message.answer("Your mevengi is not hungry!")
-        return
-        
-
-    if int(mevengi_data[chat_id]['money']) >= 10:
-        new_money = int(mevengi_data[chat_id]['money']) - 10
-        mevengi_data[chat_id]['money'] = str(new_money)
-        mevengi_data[chat_id]["satiety"] += 10
-        await message.answer(
-            f"You fed the Mevengi! 💖\n"
-            f"Balance left: ${mevengi_data[chat_id]['money']}\n"
-            f"Satiety: {int(mevengi_data[chat_id]['satiety'])}"
-        )
-        level_up = int(mevengi_data[chat_id]['level_up']) + 10
-        
-        if level_up >= 100:
-            new_level = int(mevengi_data[chat_id]['level']) + 1
-            mevengi_data[chat_id]['level'] = new_level
-            level_up -= 100
-            await message.answer(f"Your mevengi has grew up! Now it's lvl.{new_level}")
-            if new_level == 2:
-                mevengi_data[chat_id]['casino_locker'] = False
-                await message.answer("You have unlocked casino now! Have fun!")
-
-        mevengi_data[chat_id]['level_up'] = str(level_up)
-
-        save_data(mevengi_data)
-    else:
-        await message.answer("Seems like you are too poor for this...")
-
-
-
-#!!! PET !!!
-
-@router.message(Command('pet'))
-async def petting(message: Message):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()  
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-    
-    await update_satiety_and_hygiene(message, False)
-
-    mevengi_data = load_data() 
-
-    if mevengi_data[chat_id]['happiness'] < 100:
-        mevengi_data[chat_id]['happiness'] += 2
-
-    await message.answer(f"You pet your Mevengi <3\nHappiness: {mevengi_data[chat_id]['happiness']}", parse_mode=None)
-    
-    save_data(mevengi_data)
-
-
-
-
-#!!! BATH !!!
-
-@router.message(Command('bath'))
-async def petting(message: Message):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()  
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-    
-    await update_satiety_and_hygiene(message, True)
-
-    mevengi_data = load_data()
-
-    mevengi_data[chat_id]['hygiene_number'] += 15
-    save_data(mevengi_data)
-
-    if mevengi_data[chat_id]['hygiene_number'] > 100:
-       mevengi_data[chat_id]['hygiene_number'] = 100 
-
-    if 80 <= mevengi_data[chat_id]['hygiene_number'] <= 100:
-          mevengi_data[chat_id]['hygiene_status'] = 'Perfectly clean'
-    elif 60 <= mevengi_data[chat_id]['hygiene_number'] < 80:
-          mevengi_data[chat_id]['hygiene_status'] = 'Good'
-    elif 40 <= mevengi_data[chat_id]['hygiene_number'] < 60:
-          mevengi_data[chat_id]['hygiene_status'] = 'A bit sweaty'
-    elif 20 <= mevengi_data[chat_id]['hygiene_number'] < 40:
-          mevengi_data[chat_id]['hygiene_status'] = 'Stinks'
-    else:
-          mevengi_data[chat_id]['hygiene_status'] = 'Horrible'
-
-    await message.answer(f"You washed your Mevengi! Now it's hygiene status is: {mevengi_data[chat_id]['hygiene_status']}.")
-    
-
-    save_data(mevengi_data)
 
 
 #!!! CASINO !!!
 
-@router.message(Command('casino'))
+@router_casino.message(Command('casino'))
 async def command_casino(message: Message):
     chat_id = str(message.chat.id)
     mevengi_data = load_data()
@@ -443,7 +138,7 @@ async def command_casino(message: Message):
 
 #!!! LOTTERY !!!
 
-@router.message(Command('lottery'))
+@router_casino.message(Command('lottery'))
 async def command_lottery(message: Message):
         chat_id = str(message.chat.id)
         mevengi_data = load_data()
@@ -459,7 +154,7 @@ async def command_lottery(message: Message):
 
         await message.answer(f"One lottery ticket costs $20. \n\nWin gives you $200. \nJackpot gives you $10k. \nSuper Jackpot gives you $100k.\n\nChances: \nWin - 8%\nJackpot - 0.2%\nSuper Jackpot - 0.016%\n\nTo buy ticket use /ticket.")
 
-@router.message(Command('ticket'))
+@router_casino.message(Command('ticket'))
 async def play_lottery(message: Message):
     chat_id = str(message.chat.id)
     mevengi_data = load_data()
@@ -504,7 +199,7 @@ async def play_lottery(message: Message):
 
 #!!! NUMBER GUESS !!!
 
-@router.message(Command('number_guess'))
+@router_casino.message(Command('number_guess'))
 async def command_number(message: Message):
         chat_id = str(message.chat.id)
         mevengi_data = load_data()
@@ -519,7 +214,7 @@ async def command_number(message: Message):
 
 
 
-@router.message(Command('play_guess'))
+@router_casino.message(Command('play_guess'))
 async def play_number(message: Message, state: FSMContext):
         chat_id = str(message.chat.id)
         mevengi_data = load_data()
@@ -536,7 +231,7 @@ async def play_number(message: Message, state: FSMContext):
 
     
 
-@router.message(NumberGuess.bet)
+@router_casino.message(NumberGuess.bet)
 async def guess_game(message: Message, state: FSMContext):
      chat_id = str(message.chat.id)
      mevengi_data = load_data()
@@ -563,7 +258,7 @@ async def guess_game(message: Message, state: FSMContext):
 
 
 
-@router.message(NumberGuess.guess)
+@router_casino.message(NumberGuess.guess)
 async def guess_game_stage2(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
     await update_satiety_and_hygiene(message, False)
@@ -604,7 +299,7 @@ async def guess_game_stage2(message: Message, state: FSMContext):
 #!!! PAPER SCISSORS ROCK !!!
 
 
-@router.message(Command('paper_scissors_rock'))
+@router_casino.message(Command('paper_scissors_rock'))
 async def paper_scissors_rock_rules(message: Message):
         chat_id = str(message.chat.id)
         mevengi_data = load_data()
@@ -617,7 +312,7 @@ async def paper_scissors_rock_rules(message: Message):
          return  
         await message.answer(f"This is classic paper-scissors-rock game.\nJust enter amount of your bet.\nIf you won bet will be doubled.\nIf you lost you will lose whole amount.\nIf it's a tie your money will be returned.\nTo play use /play_psr.")
 
-@router.message(Command('play_psr'))
+@router_casino.message(Command('play_psr'))
 async def play_psr(message: Message, state: FSMContext):
         chat_id = str(message.chat.id)
         mevengi_data = load_data()
@@ -632,7 +327,7 @@ async def play_psr(message: Message, state: FSMContext):
         await state.set_state(PaperScissorsRock.bet)
 
 
-@router.message(PaperScissorsRock.bet)
+@router_casino.message(PaperScissorsRock.bet)
 async def bet_psr(message: Message, state: FSMContext):
      chat_id = str(message.chat.id)
      await update_satiety_and_hygiene(message, False)
@@ -658,7 +353,7 @@ async def bet_psr(message: Message, state: FSMContext):
                 await message.answer("Enter valid number.")
 
 
-@router.message(PaperScissorsRock.choice)
+@router_casino.message(PaperScissorsRock.choice)
 async def guess_game_stage2(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
     await update_satiety_and_hygiene(message, False)
@@ -728,104 +423,3 @@ async def guess_game_stage2(message: Message, state: FSMContext):
                    
     else:
          await message.answer("Enter valid option(1, 2 or 3)!")
-
-
-
-
-#!!! TAP-TAP !!!
-
-
-@router.message(Command('tap_tap'))
-async def show_stats(message: Message):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()
-
-    if chat_id not in mevengi_data:
-        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
-        return
-    if mevengi_data[chat_id]['tap_tap_lvl'] == 1:
-        money = int(mevengi_data[chat_id]['money']) + 5
-        earning = 5
-    elif mevengi_data[chat_id]['tap_tap_lvl'] == 2:
-        money = int(mevengi_data[chat_id]['money']) + 10
-        earning = 10
-    elif mevengi_data[chat_id]['tap_tap_lvl'] == 3:
-        money = int(mevengi_data[chat_id]['money']) + 15
-        earning = 15
-    elif mevengi_data[chat_id]['tap_tap_lvl'] == 4:
-        money = int(mevengi_data[chat_id]['money']) + 20
-        earning = 20
-    else:
-        money = int(mevengi_data[chat_id]['money']) + 50
-        earning = 50
-    mevengi_data[chat_id]['money'] = str(money)
-    await message.answer(f"You tapped and earned ${earning}! Your balance now is ${mevengi_data[chat_id]['money']}.\nCurrent level of tap-tap: {mevengi_data[chat_id]['tap_tap_lvl']}. To upgrade it use /upgrade_tap.")
-
-    save_data(mevengi_data)
-
-
-@router.message(Command('upgrade_tap'))
-async def upgrade_tap_tap(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()  
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-    
-    await update_satiety_and_hygiene(message, False)
-
-    mevengi_data = load_data() 
-
-    if mevengi_data[chat_id]['tap_tap_lvl'] == 5:
-        await message.answer("You already have highest possible tap_tap level!")
-        return
-
-    price_upgrade = find_price(message)
-
-    if int(mevengi_data[chat_id]['money']) < price_upgrade:
-         await message.answer(f"Upgrade costs ${price_upgrade}. You have not enough money!")
-         return
-    
-    await message.answer(f"Upgrade costs ${price_upgrade}. Want to purchase?(type Yes for purchase and No for declining)")
-    
-    await state.set_state(TapUpgrade.choice)
-    
-    save_data(mevengi_data)
-
-@router.message(TapUpgrade.choice)
-async def upgrade_tap_tap(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    
-    await update_satiety_and_hygiene(message, False)
-
-    mevengi_data = load_data() 
-
-    if message.text.lower() == 'yes':
-
-        price_upgrade = find_price(message)
-
-        new_money = int(mevengi_data[chat_id]['money']) - price_upgrade
-
-        mevengi_data[chat_id]['money'] = str(new_money)
-
-        mevengi_data[chat_id]['tap_tap_lvl'] += 1
-
-        await message.answer(f"You have upgraded tap_tap! New level is: {mevengi_data[chat_id]['tap_tap_lvl']}.")
-        save_data(mevengi_data)
-        await state.clear()
-        
-        return
-    
-    if message.text.lower() == 'no':
-
-        await message.answer(f"Ok. You exited upgrading menu. Use /help if needed.")
-        save_data(mevengi_data)
-        await state.clear()
-        
-        return
-    
-
-    else:
-         await message.answer("Please enter a valid answer 'Yes' or 'No'...")
-
-    

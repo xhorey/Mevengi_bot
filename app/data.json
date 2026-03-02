@@ -8,16 +8,18 @@
     },
     "-5125942431": {
         "id": "-5125942431",
-        "name": "HAHAHAHA",
-        "level": 2,
+        "name": "Isi",
+        "level": 5,
         "money": "0",
-        "level_up": "0",
-        "satiety": 41.22014022270838,
-        "happiness": 100,
-        "last_update": 1772301584.1260056,
+        "level_up": "40",
+        "satiety": 38.39857392112414,
+        "happiness": 90,
+        "last_update": 1772430129.3440578,
         "hygiene_status": "Perfectly clean",
-        "hygiene_number": 95.6100701113542,
-        "casino_locker": false,
-        "tap_tap_lvl": 5
+        "hygiene_number": 99.98011405865351,
+        "casino_locker": true,
+        "tap_tap_lvl": 1,
+        "bank_locker": false,
+        "bank_money": 70
     }
 }

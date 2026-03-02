@@ -29,3 +29,7 @@ class PaperScissorsRock(StatesGroup):
 
 class TapUpgrade(StatesGroup):
     choice = State()
+
+class Banking(StatesGroup):
+    deposit = State()
+    withdraw = State()
