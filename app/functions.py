@@ -38,6 +38,17 @@ async def time_updates(message: Message, is_bathing):
      two_minutes_passed = (now - mevengi_data[chat_id]['last_update']) / 120
      decrease_satiety = two_minutes_passed
      decrease_hygiene = two_minutes_passed/2
+
+     if mevengi_data[chat_id]['deposited']:
+        deposit_count_hour = (now - mevengi_data[chat_id]['last_update']) / 3600
+        mevengi_data[chat_id]['deposit_counter'] += deposit_count_hour
+        if mevengi_data[chat_id]['deposit_counter'] >= 5:
+             times = int(mevengi_data[chat_id]['deposit_counter'] // 5)
+             for i in range(times):
+                mevengi_data[chat_id]['deposit_counter'] -= 5
+                mevengi_data[chat_id]['bank_money'] = mevengi_data[chat_id]['bank_money'] * 1.05
+             
+     
      mevengi_data[chat_id]['satiety'] -= decrease_satiety
      mevengi_data[chat_id]['hygiene_number'] -= decrease_hygiene
 

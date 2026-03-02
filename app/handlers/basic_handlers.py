@@ -70,7 +70,9 @@ async def command_create_second_stage(message: Message, state: FSMContext):
         "casino_locker": True,
         "tap_tap_lvl": 1,
         "bank_locker": True,
-        "bank_money": 0
+        "bank_money": 0,
+        "deposit_counter": 0,
+        "deposited": False
 
     }
 
@@ -122,7 +124,7 @@ async def show_stats(message: Message):
         f"Level: {mevengi_data[chat_id]['level']}\n"
         f"Balance: ${mevengi_data[chat_id]['money']}\n"
         f"Satiety: {int(mevengi_data[chat_id]['satiety'])}\n"
-        f"Happiness: {mevengi_data[chat_id]['happiness']}\nHygiene status: {mevengi_data[chat_id]['hygiene_status']}\nTap-tap level: {mevengi_data[chat_id]['tap_tap_lvl']}\nMoney on bank account: ${mevengi_data[chat_id]['bank_money']}"
+        f"Happiness: {mevengi_data[chat_id]['happiness']}\nHygiene status: {mevengi_data[chat_id]['hygiene_status']}\nTap-tap level: {mevengi_data[chat_id]['tap_tap_lvl']}\nMoney on bank account: ${int(mevengi_data[chat_id]['bank_money'])}"
     )
 
 

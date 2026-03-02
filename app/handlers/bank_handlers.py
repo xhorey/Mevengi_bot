@@ -26,7 +26,7 @@ async def bank_menu(message: Message):
          save_data(mevengi_data)
          return
 
-    await message.answer(f"Here is your bank account. \nBalance: ${mevengi_data[chat_id]['bank_money']}.\nUse /deposit to put money on your account and get some % every 5 hours. \nUse /withdraw to withdraw money from your deposit.")
+    await message.answer(f"Here is your bank account. \nBalance: ${int(mevengi_data[chat_id]['bank_money'])}.\nUse /deposit to put money on your account and get some % every 5 hours. \nUse /withdraw to withdraw money from your deposit.")
     
     
     save_data(mevengi_data)
@@ -75,7 +75,9 @@ async def deposit_second(message: Message, state: FSMContext):
                     mevengi_data[chat_id]['money'] = str(new_balance)
                     save_data(mevengi_data)
                     await state.clear()
-                    await message.answer(f"You deposited ${deposit}! Money on your account: ${mevengi_data[chat_id]['bank_money']}.")
+                    await message.answer(f"You deposited ${deposit}! Money on your account: ${int(mevengi_data[chat_id]['bank_money'])}.")
+                    mevengi_data[chat_id]['deposited'] = True
+
                     
                 else:
                     await message.answer(f"You are too poor for this big deposit. Current amount of money you have: ${mevengi_data[chat_id]['money']}.\nType-in 'exit' if u wanna exit depositing state or try lower amount.")
@@ -104,7 +106,7 @@ async def withdraw(message: Message, state: FSMContext):
          save_data(mevengi_data)
          return
 
-    await message.answer(f"Your current balance is ${mevengi_data[chat_id]['bank_money']}. How much money you want to withdraw? Enter the number.")
+    await message.answer(f"Your current balance is ${int(mevengi_data[chat_id]['bank_money'])}. How much money you want to withdraw? Enter the number.")
     await state.set_state(Banking.withdraw)
     
     save_data(mevengi_data)
@@ -131,10 +133,10 @@ async def withdraw_second(message: Message, state: FSMContext):
                     mevengi_data[chat_id]['money'] = str(new_balance)
                     save_data(mevengi_data)
                     await state.clear()
-                    await message.answer(f"You withdrawed ${withdraw}! Money on your account: ${mevengi_data[chat_id]['bank_money']}.")
+                    await message.answer(f"You withdrawed ${withdraw}! Money on your account: ${int(mevengi_data[chat_id]['bank_money'])}.")
                     
                 else:
-                    await message.answer(f"You don't have this much on your account. Current amount you have: ${mevengi_data[chat_id]['bank_money']}.\nType-in 'exit' if u wanna exit depositing state or try lower amount.")
+                    await message.answer(f"You don't have this much on your account. Current amount you have: ${int(mevengi_data[chat_id]['bank_money'])}.\nType-in 'exit' if u wanna exit depositing state or try lower amount.")
     else:
                 await message.answer("Enter valid number.")
     
