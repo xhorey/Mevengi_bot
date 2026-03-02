@@ -1,103 +1,15 @@
 from aiogram import F, Router, html
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-import json
-import random
-import time
-
-from app.classes import Mevengi, Creation, NameChange, NumberGuess, PaperScissorsRock, TapUpgrade, Banking
+from app.functions import save_data, load_data, time_updates, find_price
+from app.classes import TapUpgrade
 
 
-
-
-
-
-     
-
-#!!! PRICE !!!
-
-def find_price(message:Message):
-     mevengi_data = load_data()
-     chat_id = str(message.chat.id)
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 1:
-          return 200
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 2:
-          return 500
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 3:
-          return 2500
-     if mevengi_data[chat_id]['tap_tap_lvl'] == 4:
-          return 5000
-     
-
-
-
-
-#DATA FUNCTIONS
-
-
-def load_data():
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
-
-def save_data(data):
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4)
-
-
-
-#!!! SATIETY AND HYGIENE UPDATE !!!
-
-async def update_satiety_and_hygiene(message: Message, is_bathing):
-     mevengi_data = load_data()
-     chat_id = str(message.chat.id)
-     now = time.time()
-     two_minutes_passed = (now - mevengi_data[chat_id]['last_update']) / 120
-     decrease_satiety = two_minutes_passed
-     decrease_hygiene = two_minutes_passed/2
-     mevengi_data[chat_id]['satiety'] -= decrease_satiety
-     mevengi_data[chat_id]['hygiene_number'] -= decrease_hygiene
-
-     if mevengi_data[chat_id]['satiety'] < 0:
-          mevengi_data[chat_id]['satiety'] = 0
-
-     if mevengi_data[chat_id]['hygiene_number'] < 0:
-          mevengi_data[chat_id]['hygiene_number'] = 0
-
-     if int(mevengi_data[chat_id]['satiety']) < 30:
-        await message.answer("Your Mevengi is hungry  and gets sad...")
-        if mevengi_data[chat_id]['happiness']>0:
-            mevengi_data[chat_id]['happiness'] -= 5
-
-     if 80 <= mevengi_data[chat_id]['hygiene_number'] <= 100:
-          mevengi_data[chat_id]['hygiene_status'] = 'Perfectly clean'
-     elif 60 <= mevengi_data[chat_id]['hygiene_number'] < 80:
-          mevengi_data[chat_id]['hygiene_status'] = 'Good'
-     elif 40 <= mevengi_data[chat_id]['hygiene_number'] < 60:
-          mevengi_data[chat_id]['hygiene_status'] = 'A bit sweaty'
-     elif 20 <= mevengi_data[chat_id]['hygiene_number'] < 40:
-          mevengi_data[chat_id]['hygiene_status'] = 'Stinks'
-          if is_bathing == False:
-               await message.answer("Your Mevengi stinks! It's better to give it some bath as soon as possible!")
-     else:
-          mevengi_data[chat_id]['hygiene_status'] = 'Horrible'
-          if is_bathing == False:
-               await message.answer("Your Mevengi stinks so bad! Give it some bath NOW!!!")
-
-
-     mevengi_data[chat_id]['last_update'] = now
-     
-     
-     save_data(mevengi_data)
 
 #REST OF STUFF
 
 router_tap = Router()
-
-file_path = "app/data.json"
 
 #!!! TAP-TAP !!!
 
@@ -139,7 +51,7 @@ async def upgrade_tap_tap(message: Message, state: FSMContext):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
     
-    await update_satiety_and_hygiene(message, False)
+    await time_updates(message, False)
 
     mevengi_data = load_data() 
 
@@ -163,7 +75,7 @@ async def upgrade_tap_tap(message: Message, state: FSMContext):
 async def upgrade_tap_tap(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
     
-    await update_satiety_and_hygiene(message, False)
+    await time_updates(message, False)
 
     mevengi_data = load_data() 
 

@@ -2,119 +2,11 @@ from aiogram import F, Router, html
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-import json
-import random
-import time
-
+from app.functions import save_data, load_data, time_updates, choice_psr, random_number_generator, lottery_ticket
 from app.classes import NumberGuess, PaperScissorsRock
 
 
 router_casino = Router()
-
-file_path = "app/data.json"
-
-
-#CASINO FUNCTIONS
-
-def lottery_ticket():
-     result_lottery = random.randint(1, 100000)
-     if 0<result_lottery<=16:
-          return "super_jackpot"
-     elif 16<result_lottery<=216:
-          return "jackpot"
-     elif 216<result_lottery<=8216:
-          return "win"
-     else:
-          return "lose"
-
-
-
-def random_number_generator():
-    number = random.randint(1, 10)
-    if number < 5:
-        return '2'   
-    elif number == 5:
-        return '3'  
-    else:
-        return '1'  
-     
-
-
-def choice_psr():
-     number = random.randint(1,3)
-     if number == 1:
-          print("paper")
-          return "paper"
-     elif number == 2:
-          print("scissors")
-          return "scissors"
-     elif number ==3:
-          print("rock")
-          return "rock"
-
-#DATA FUNCTIONS
-
-
-def load_data():
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
-
-def save_data(data):
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4)
-
-
-
-#!!! SATIETY AND HYGIENE UPDATE !!!
-
-async def update_satiety_and_hygiene(message: Message, is_bathing):
-     mevengi_data = load_data()
-     chat_id = str(message.chat.id)
-     now = time.time()
-     two_minutes_passed = (now - mevengi_data[chat_id]['last_update']) / 120
-     decrease_satiety = two_minutes_passed
-     decrease_hygiene = two_minutes_passed/2
-     mevengi_data[chat_id]['satiety'] -= decrease_satiety
-     mevengi_data[chat_id]['hygiene_number'] -= decrease_hygiene
-
-     if mevengi_data[chat_id]['satiety'] < 0:
-          mevengi_data[chat_id]['satiety'] = 0
-
-     if mevengi_data[chat_id]['hygiene_number'] < 0:
-          mevengi_data[chat_id]['hygiene_number'] = 0
-
-     if int(mevengi_data[chat_id]['satiety']) < 30:
-        await message.answer("Your Mevengi is hungry  and gets sad...")
-        if mevengi_data[chat_id]['happiness']>0:
-            mevengi_data[chat_id]['happiness'] -= 5
-
-     if 80 <= mevengi_data[chat_id]['hygiene_number'] <= 100:
-          mevengi_data[chat_id]['hygiene_status'] = 'Perfectly clean'
-     elif 60 <= mevengi_data[chat_id]['hygiene_number'] < 80:
-          mevengi_data[chat_id]['hygiene_status'] = 'Good'
-     elif 40 <= mevengi_data[chat_id]['hygiene_number'] < 60:
-          mevengi_data[chat_id]['hygiene_status'] = 'A bit sweaty'
-     elif 20 <= mevengi_data[chat_id]['hygiene_number'] < 40:
-          mevengi_data[chat_id]['hygiene_status'] = 'Stinks'
-          if is_bathing == False:
-               await message.answer("Your Mevengi stinks! It's better to give it some bath as soon as possible!")
-     else:
-          mevengi_data[chat_id]['hygiene_status'] = 'Horrible'
-          if is_bathing == False:
-               await message.answer("Your Mevengi stinks so bad! Give it some bath NOW!!!")
-
-
-     mevengi_data[chat_id]['last_update'] = now
-     
-     
-     save_data(mevengi_data)
-
-
-
-
 
 
 
@@ -132,7 +24,7 @@ async def command_casino(message: Message):
          await message.answer('You need level 2 to access this function :)') 
          return     
     
-    await update_satiety_and_hygiene(message, False)
+    await time_updates(message, False)
     await message.answer(f"Casino commands:\n\n/lottery - shows you lottery rules.\n/number_guess - shows you number guessing rules.\n/paper_scissors_rock - shows you paper-scissors-rock rules.")
 
 
@@ -146,7 +38,7 @@ async def command_lottery(message: Message):
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
         
-        await update_satiety_and_hygiene(message, False)
+        await time_updates(message, False)
 
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
@@ -163,7 +55,7 @@ async def play_lottery(message: Message):
          await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
          return
 
-    await update_satiety_and_hygiene(message, False)
+    await time_updates(message, False)
 
     if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
@@ -206,7 +98,7 @@ async def command_number(message: Message):
         if chat_id not in mevengi_data:
             await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
             return
-        await update_satiety_and_hygiene(message, False)
+        await time_updates(message, False)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -221,7 +113,7 @@ async def play_number(message: Message, state: FSMContext):
         if chat_id not in mevengi_data:
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
-        await update_satiety_and_hygiene(message, False)
+        await time_updates(message, False)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -239,7 +131,7 @@ async def guess_game(message: Message, state: FSMContext):
         await state.clear()
         await message.answer("You exited the game! You can use /help if needed.")
         return
-     await update_satiety_and_hygiene(message, False)
+     await time_updates(message, False)
      mevengi_data = load_data()
      if message.text.isdigit():
                 bet_money = int(message.text)
@@ -261,7 +153,7 @@ async def guess_game(message: Message, state: FSMContext):
 @router_casino.message(NumberGuess.guess)
 async def guess_game_stage2(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
-    await update_satiety_and_hygiene(message, False)
+    await time_updates(message, False)
     mevengi_data = load_data()
     fsm_data = await state.get_data()
     if message.text.isdigit() and 1 <= int(message.text) <= 3:
@@ -306,7 +198,7 @@ async def paper_scissors_rock_rules(message: Message):
         if chat_id not in mevengi_data:
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
-        await update_satiety_and_hygiene(message, False)
+        await time_updates(message, False)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -319,7 +211,7 @@ async def play_psr(message: Message, state: FSMContext):
         if chat_id not in mevengi_data:
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
-        await update_satiety_and_hygiene(message, False)
+        await time_updates(message, False)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -330,7 +222,7 @@ async def play_psr(message: Message, state: FSMContext):
 @router_casino.message(PaperScissorsRock.bet)
 async def bet_psr(message: Message, state: FSMContext):
      chat_id = str(message.chat.id)
-     await update_satiety_and_hygiene(message, False)
+     await time_updates(message, False)
      mevengi_data = load_data()
      if message.text.lower() == 'exit':
         await state.clear()
@@ -356,7 +248,7 @@ async def bet_psr(message: Message, state: FSMContext):
 @router_casino.message(PaperScissorsRock.choice)
 async def guess_game_stage2(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
-    await update_satiety_and_hygiene(message, False)
+    await time_updates(message, False)
     mevengi_data = load_data()
     fsm_data = await state.get_data()
 

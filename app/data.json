@@ -9,17 +9,17 @@
     "-5125942431": {
         "id": "-5125942431",
         "name": "Isi",
-        "level": 5,
-        "money": "0",
-        "level_up": "40",
-        "satiety": 38.39857392112414,
-        "happiness": 90,
-        "last_update": 1772430129.3440578,
-        "hygiene_status": "Perfectly clean",
-        "hygiene_number": 99.98011405865351,
+        "level": 6,
+        "money": "10",
+        "level_up": "0",
+        "satiety": 53.13365726868311,
+        "happiness": 60,
+        "last_update": 1772474283.6977856,
+        "hygiene_status": "Good",
+        "hygiene_number": 71.51588255564376,
         "casino_locker": true,
         "tap_tap_lvl": 1,
         "bank_locker": false,
-        "bank_money": 70
+        "bank_money": 60
     }
 }
