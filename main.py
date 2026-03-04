@@ -10,6 +10,7 @@ from app.handlers.bank_handlers import router_bank
 from app.handlers.casino_handlers import router_casino
 from app.handlers.treatment_handlers import router_treatment
 from app.handlers.tap_handlers import router_tap
+from app.handlers.shopinventory_handlers import router_shopinventory
 from dotenv import load_dotenv
 
 
@@ -29,6 +30,7 @@ async def main() -> None:
     dp.include_router(router_casino)
     dp.include_router(router_treatment)
     dp.include_router(router_tap)
+    dp.include_router(router_shopinventory)
 
     
     bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))

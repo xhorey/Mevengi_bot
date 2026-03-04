@@ -8,20 +8,24 @@
     },
     "-5125942431": {
         "id": "-5125942431",
-        "name": "Dodik",
-        "level": 5,
-        "money": "60",
-        "level_up": "10",
-        "satiety": 68.99824080864589,
-        "happiness": 100,
-        "last_update": 1772477057.8826423,
+        "name": "fg",
+        "level": 1,
+        "money": "7",
+        "level_up": "70",
+        "satiety": 67.87017313838005,
+        "happiness": 54,
+        "last_update": 1772589864.8694406,
         "hygiene_status": "Perfectly clean",
-        "hygiene_number": 100,
+        "hygiene_number": 85.4670713961125,
         "casino_locker": true,
         "tap_tap_lvl": 1,
-        "bank_locker": false,
-        "bank_money": 22.05,
-        "deposit_counter": 0.016759534478187905,
-        "deposited": true
+        "bank_locker": true,
+        "bank_money": 0,
+        "deposit_counter": 0,
+        "deposited": false,
+        "inventory": {
+            "burgers": 2,
+            "salads": 1
+        }
     }
 }

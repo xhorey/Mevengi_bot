@@ -72,7 +72,8 @@ async def command_create_second_stage(message: Message, state: FSMContext):
         "bank_locker": True,
         "bank_money": 0,
         "deposit_counter": 0,
-        "deposited": False
+        "deposited": False,
+        "inventory": {}
 
     }
 
@@ -137,7 +138,7 @@ async def how_are_you(message: Message):
 
 @router.message(Command('help'))
 async def command_help(message: Message):
-        await message.answer(f"Here is the list of commands:\n\n/stats - shows you statistic of your mevengi.\n/feed - used to feed your mevengi.\n/casino - shows you a list of commands for casino.\n/change_name - allows you to change your mevengi's name.\n/tap_tap - get easy money.\n/pet - pet Mevengi and make him happier.\n/bath - give your mevengi a bath.")
+        await message.answer(f"Here is the list of commands:\n\n/stats - shows you statistic of your mevengi.\n/feed - used to feed your mevengi.\n/casino - shows you a list of commands for casino.\n/change_name - allows you to change your mevengi's name.\n/tap_tap - get easy money.\n/pet - pet Mevengi and make him happier.\n/bath - give your mevengi a bath.\n/bank - check your bank account.\n/inventory - manage your inventory.\n/shop - to buy things for your mevengi.")
 
 
 
@@ -191,12 +192,4 @@ async def change_name(message: Message, state: FSMContext):
     save_data(mevengi_data)
     await message.answer("You successfully changed your mevengi's name!")
     await state.clear()
-
-
-
-
-
-
-
-
 

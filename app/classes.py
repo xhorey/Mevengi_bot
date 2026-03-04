@@ -33,3 +33,7 @@ class TapUpgrade(StatesGroup):
 class Banking(StatesGroup):
     deposit = State()
     withdraw = State()
+
+class Shopping(StatesGroup):
+    product = State()
+    quantity = State()

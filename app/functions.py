@@ -136,3 +136,16 @@ def find_price(message:Message):
           return 2500
      if mevengi_data[chat_id]['tap_tap_lvl'] == 4:
           return 5000
+     
+
+
+
+#!!! INVENTORY !!!
+
+def inventory_show(message: Message):
+    chat_id = str(message.chat.id)
+    mevengi_data = load_data()  
+    str_inventory = ""
+    for i in mevengi_data[chat_id]['inventory']:
+        str_inventory += str(i) + f" - {mevengi_data[chat_id]['inventory'][i]}\n"
+    return str_inventory
