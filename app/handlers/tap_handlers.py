@@ -38,7 +38,7 @@ async def show_stats(message: Message):
         money = int(mevengi_data[chat_id]['money']) + 50
         earning = 50
     mevengi_data[chat_id]['money'] = str(money)
-    await message.answer(f"You tapped and earned ${earning}! Your balance now is ${mevengi_data[chat_id]['money']}.\nCurrent level of tap-tap: {mevengi_data[chat_id]['tap_tap_lvl']}. To upgrade it use /upgrade_tap.")
+    await message.answer(f"You tapped and earned ${earning}🤑 \nYour balance now is 💵: ${mevengi_data[chat_id]['money']}.\nCurrent level of tap-tap: {mevengi_data[chat_id]['tap_tap_lvl']}. \nTo upgrade it use ⏫/upgrade_tap.")
 
     save_data(mevengi_data)
 
@@ -89,7 +89,7 @@ async def upgrade_tap_tap(message: Message, state: FSMContext):
 
         mevengi_data[chat_id]['tap_tap_lvl'] += 1
 
-        await message.answer(f"You have upgraded tap_tap! New level is: {mevengi_data[chat_id]['tap_tap_lvl']}.")
+        await message.answer(f"🆙You have upgraded tap_tap!🆙\nNew level is: {mevengi_data[chat_id]['tap_tap_lvl']}.")
         save_data(mevengi_data)
         await state.clear()
         

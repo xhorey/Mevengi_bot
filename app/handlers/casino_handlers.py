@@ -25,7 +25,7 @@ async def command_casino(message: Message):
          return     
     
     await time_updates(message, False, True)
-    await message.answer(f"Casino commands:\n\n/lottery - shows you lottery rules.\n/number_guess - shows you number guessing rules.\n/paper_scissors_rock - shows you paper-scissors-rock rules.")
+    await message.answer(f"Casino commands 🎰:\n\n/lottery - shows you lottery rules.\n\n/number_guess - shows you number guessing rules.\n\n/paper_scissors_rock - shows you paper-scissors-rock rules.")
 
 
 #!!! LOTTERY !!!
@@ -44,7 +44,7 @@ async def command_lottery(message: Message):
          await message.answer('You need level 2 to access this function :)') 
          return  
 
-        await message.answer(f"One lottery ticket costs $20. \n\nWin gives you $200. \nJackpot gives you $10k. \nSuper Jackpot gives you $100k.\n\nChances: \nWin - 8%\nJackpot - 0.2%\nSuper Jackpot - 0.016%\n\nTo buy ticket use /ticket.")
+        await message.answer(f"One lottery ticket costs $20\n\n🤑 Win gives you $200. \n💸 Jackpot gives you $10k. \n💸💸💸 Super Jackpot gives you $100k.\n\nChances: \nWin - 8%\nJackpot - 0.2%\nSuper Jackpot - 0.016%\n\nTo buy ticket use /ticket.")
 
 @router_casino.message(Command('ticket'))
 async def play_lottery(message: Message):
@@ -71,17 +71,17 @@ async def play_lottery(message: Message):
         if result_ticket == "super_jackpot":
              new_money = int(mevengi_data[chat_id]['money']) + 100000
              mevengi_data[chat_id]['money'] = str(new_money)
-             await message.answer(f"IT'S SUPER JACKPOT!!!!!!!!!\nBalance left: ${mevengi_data[chat_id]['money']}")
+             await message.answer(f"💸💸💸IT'S SUPER JACKPOT💸💸💸\nBalance left: ${mevengi_data[chat_id]['money']}")
         elif result_ticket == "jackpot":
              new_money = int(mevengi_data[chat_id]['money']) + 10000
              mevengi_data[chat_id]['money'] = str(new_money)
-             await message.answer(f"IT'S JACKPOT!!!!!!!!!\nBalance left: ${mevengi_data[chat_id]['money']}")
+             await message.answer(f"💸IT'S JACKPOT💸\nBalance left: ${mevengi_data[chat_id]['money']}")
         elif result_ticket == 'win':
              new_money = int(mevengi_data[chat_id]['money']) + 200
              mevengi_data[chat_id]['money'] = str(new_money)
-             await message.answer(f"You won!\nBalance left: ${mevengi_data[chat_id]['money']}")
+             await message.answer(f"You won 🤑\nBalance left: ${mevengi_data[chat_id]['money']}")
         else:
-             await message.answer(f"You lost.\nBalance left: ${mevengi_data[chat_id]['money']}")
+             await message.answer(f"You lost 😔\nBalance left: ${mevengi_data[chat_id]['money']}")
         
         save_data(mevengi_data)
         
@@ -102,7 +102,7 @@ async def command_number(message: Message):
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
-        await message.answer(f"Machine randomly generates number from 1 to 10. \nYou can choose either you think the number is greater than 5, lower than 5 or equals 5. \nIf you chose greater than 5 and won you will multiply your bet by 1.7, if you chose lower than 5 and guessed you will double your bet and if you chose 5 and guessed you will get your bet multiplied by 10. \nTo play use /play_guess")
+        await message.answer(f"Machine randomly generates number from 1 to 10 ❔ \n\nYou can choose either you think the number is greater than 5, lower than 5 or equals 5. \nIf you chose greater than 5 and won you will multiply your bet by 1.7, if you chose lower than 5 and guessed you will double your bet and if you chose 5 and guessed you will get your bet multiplied by 10. \nTo play use /play_guess")
 
 
 
@@ -202,7 +202,7 @@ async def paper_scissors_rock_rules(message: Message):
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
-        await message.answer(f"This is classic paper-scissors-rock game.\nJust enter amount of your bet.\nIf you won bet will be doubled.\nIf you lost you will lose whole amount.\nIf it's a tie your money will be returned.\nTo play use /play_psr.")
+        await message.answer(f"This is classic paper-scissors-rock game ✂️📄🪨\n\nJust enter amount of your bet.\nIf you won bet will be doubled.\nIf you lost you will lose whole amount.\nIf it's a tie your money will be returned.\nTo play use /play_psr.")
 
 @router_casino.message(Command('play_psr'))
 async def play_psr(message: Message, state: FSMContext):
@@ -232,7 +232,7 @@ async def bet_psr(message: Message, state: FSMContext):
      if message.text.isdigit():
                 bet_money = int(message.text)
                 if bet_money <= int(mevengi_data[chat_id]['money']):
-                    await message.answer(f"Type your choice(just a number):\n1.Paper.\n2.Scissors.\n3.Rock.")
+                    await message.answer(f"Type your choice(just a number):\n1. Paper📄\n2. Scissors✂️\n3. Rock🪨")
                     await state.update_data(bet = message.text)
                     new_balance = int(mevengi_data[chat_id]['money']) - bet_money
                     mevengi_data[chat_id]['money'] = str(new_balance)

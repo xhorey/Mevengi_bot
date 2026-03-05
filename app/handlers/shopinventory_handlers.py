@@ -24,12 +24,12 @@ async def inventory(message: Message):
     mevengi_data = load_data() 
 
     if not mevengi_data[chat_id]['inventory']:
-        await message.answer(f"Your inventory is empty right now!\nYou can use /shop to buy some food.")
+        await message.answer(f"Your inventory is empty right now!\nYou can use 🛒/shop to buy some food.")
         return
     
     inventory = inventory_show(message)
     
-    await message.answer(f"Your inventory: \n{inventory}")
+    await message.answer(f"🎒Your inventory: \n\n{inventory}")
     save_data(mevengi_data)
 
 
@@ -47,7 +47,7 @@ async def shop(message: Message):
 
     mevengi_data = load_data() 
 
-    await message.answer(f"Your balance: ${mevengi_data[chat_id]['money']}.\n/food - see the food list.")
+    await message.answer(f"Your balance 💵: ${mevengi_data[chat_id]['money']}.\n\n🍴/food - see the food list.")
     
     save_data(mevengi_data)
 
@@ -64,7 +64,7 @@ async def food_buy(message: Message, state: FSMContext):
 
     mevengi_data = load_data() 
 
-    await message.answer(f"Available products to buy:\n1. Burger(🍗: 10 💲: 7)\n2. Pizza(🍗: 25 💲: 15)\n3. Salad(🍗: 10 💲: 9)\n4. Coca-loca(🍗: 3 💲: 3)\nEnter the number of product you wanna buy, or 'exit' to exit menu.")
+    await message.answer(f"Available products to buy:\n\n1. Burger(🍗: 10 💲: 7)\n2. Pizza(🍗: 25 💲: 15)\n3. Salad(🍗: 10 💲: 9)\n4. Coca-loca(🍗: 3 💲: 3)\n\nEnter the number of product you wanna buy, or 'exit' to exit menu.")
     
     await state.set_state(Shopping.product)
 

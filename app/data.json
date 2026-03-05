@@ -9,25 +9,24 @@
     "-5125942431": {
         "id": "-5125942431",
         "name": "fg",
-        "level": 3,
-        "money": "99990364",
+        "level": 5,
+        "money": "99939364",
         "level_up": "0",
-        "satiety": 115.3052091777325,
-        "happiness": 100,
-        "last_update": 1772670483.8055844,
+        "satiety": 99.20592542886729,
+        "happiness": 73,
+        "last_update": 1772753082.963668,
         "hygiene_status": "Perfectly clean",
-        "hygiene_number": 99.48453319271405,
+        "hygiene_number": 98.42365143497787,
         "casino_locker": false,
         "tap_tap_lvl": 5,
-        "bank_locker": true,
-        "bank_money": 0,
-        "deposit_counter": 0,
-        "deposited": false,
+        "bank_locker": false,
+        "bank_money": 50000,
+        "deposit_counter": 0.012204318708843656,
+        "deposited": true,
         "inventory": {
-            "burgers": 20,
-            "pizzas": 96,
-            "salads": 4,
-            "coka-locas": 1
+            "burgers": 19,
+            "pizzas": 88,
+            "salads": 23
         }
     }
 }

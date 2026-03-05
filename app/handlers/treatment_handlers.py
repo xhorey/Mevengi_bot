@@ -33,7 +33,7 @@ async def feed(message: Message, state: FSMContext):
     
     inventory = inventory_show(message)
     
-    await message.answer(f"Your inventory: \n{inventory}\nEnter the name of food you wanna use to feed Mevengi with.")
+    await message.answer(f"🎒Your inventory: \n{inventory}\nEnter the name of food you wanna use to feed Mevengi with.")
 
     await state.set_state(Feeding.food)
 
@@ -89,7 +89,7 @@ async def choice_food(message: Message, state: FSMContext):
             new_level = int(mevengi_data[chat_id]['level']) + 1
             mevengi_data[chat_id]['level'] = new_level
             level_up -= 100
-            await message.answer(f"Your mevengi has grew up! Now it's lvl.{new_level}")
+            await message.answer(f"🆙Your mevengi has grew up!🆙\nNow it's lvl.{new_level}")
             if new_level == 2:
                 mevengi_data[chat_id]['casino_locker'] = False
                 await message.answer("You have unlocked casino now! Have fun!")
@@ -131,7 +131,7 @@ async def petting(message: Message):
             mevengi_data[chat_id]['happiness'] = 100
 
 
-    await message.answer(f"You pet your Mevengi <3\nHappiness: {mevengi_data[chat_id]['happiness']}", parse_mode=None)
+    await message.answer(f"You pet your Mevengi 🤩\nHappiness: {mevengi_data[chat_id]['happiness']}", parse_mode=None)
     
     save_data(mevengi_data)
 
@@ -169,7 +169,7 @@ async def petting(message: Message):
     else:
           mevengi_data[chat_id]['hygiene_status'] = 'Horrible'
 
-    await message.answer(f"You washed your Mevengi! Now it's hygiene status is: {mevengi_data[chat_id]['hygiene_status']}.")
+    await message.answer(f"You washed your Mevengi 🧼!\nNow it's hygiene status is: {mevengi_data[chat_id]['hygiene_status']}.")
     
 
     save_data(mevengi_data)

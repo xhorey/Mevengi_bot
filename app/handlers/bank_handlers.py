@@ -26,7 +26,7 @@ async def bank_menu(message: Message):
          save_data(mevengi_data)
          return
 
-    await message.answer(f"Here is your bank account. \nBalance: ${int(mevengi_data[chat_id]['bank_money'])}.\nUse /deposit to put money on your account and get some % every 5 hours. \nUse /withdraw to withdraw money from your deposit.")
+    await message.answer(f"Here is your bank account 🏦\n\nBalance 💳: ${int(mevengi_data[chat_id]['bank_money'])}\n\nUse /deposit to put money on your account and get 5% every 5 hours.\nUse /withdraw to withdraw money from your deposit.")
     
     
     save_data(mevengi_data)
@@ -106,7 +106,7 @@ async def withdraw(message: Message, state: FSMContext):
          save_data(mevengi_data)
          return
 
-    await message.answer(f"Your current balance is ${int(mevengi_data[chat_id]['bank_money'])}. How much money you want to withdraw? Enter the number.")
+    await message.answer(f"Your current balance 💳: ${int(mevengi_data[chat_id]['bank_money'])}. How much money you want to withdraw? Enter the number.")
     await state.set_state(Banking.withdraw)
     
     save_data(mevengi_data)

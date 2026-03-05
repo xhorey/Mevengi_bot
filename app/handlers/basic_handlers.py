@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 import time
-from app.functions import save_data, load_data, time_updates
+from app.functions import save_data, load_data, time_updates, get_emoji_state
 from app.classes import Mevengi, Creation, NameChange
 
 
@@ -80,12 +80,12 @@ async def command_create_second_stage(message: Message, state: FSMContext):
     save_data(data)
 
     await message.answer(
-        f"Your new Mevengi:\n"
-        f"Name: {mevengi.name}\n"
-        f"Level: {mevengi.level}\n"
-        f"Money: {mevengi.money}\n"
-        f"Satiety: {mevengi.satiety}\n"
-        f"Happiness: {mevengi.happiness}\nHygiene status: {data[chat_id]['hygiene_status']}\n\nUse /help to see list of commands to interact with it XD"
+        f"Your new Mevengi 🐶:\n"
+        f"Name: {html.bold(mevengi.name)}\n"
+        f"Level 📶: {mevengi.level}\n"
+        f"Money 💵: {mevengi.money}\n"
+        f"Satiety 🍴: {mevengi.satiety}\n"
+        f"Happiness 😁: {mevengi.happiness}\nHygiene status 🛁: {data[chat_id]['hygiene_status']}\n\nUse /help to see list of commands to interact with it XD"
     )
 
     await state.clear()
@@ -118,14 +118,14 @@ async def show_stats(message: Message):
 
     await time_updates(message, False, True)
     mevengi_data = load_data()
-
+    emoji = get_emoji_state(message)
     await message.answer(
-        f"Your Mevengi:\n"
-        f"Name: {mevengi_data[chat_id]['name']}\n"
-        f"Level: {mevengi_data[chat_id]['level']}\n"
-        f"Balance: ${mevengi_data[chat_id]['money']}\n"
-        f"Satiety: {int(mevengi_data[chat_id]['satiety'])}\n"
-        f"Happiness: {mevengi_data[chat_id]['happiness']}\nHygiene status: {mevengi_data[chat_id]['hygiene_status']}\nTap-tap level: {mevengi_data[chat_id]['tap_tap_lvl']}\nMoney on bank account: ${int(mevengi_data[chat_id]['bank_money'])}"
+        f"{html.bold("YOUR MEVENGI")} 🐶\n\n"
+        f"{html.bold("Name")}: {mevengi_data[chat_id]['name']}\n"
+        f"{html.bold("Level")} 📶: {mevengi_data[chat_id]['level']}\n"
+        f"{html.bold("Money")} 💵: ${mevengi_data[chat_id]['money']}\n"
+        f"{html.bold("Satiety")} 🍴: {int(mevengi_data[chat_id]['satiety'])}\n"
+        f"{html.bold("Happiness")} {emoji}: {mevengi_data[chat_id]['happiness']}\n{html.bold("Hygiene status")} 🛁: {mevengi_data[chat_id]['hygiene_status']}\n{html.bold("Tap tap level")} 👆: {mevengi_data[chat_id]['tap_tap_lvl']}\n{html.bold("Money on bank account")} 💳: ${int(mevengi_data[chat_id]['bank_money'])}"
     )
 
 
@@ -138,7 +138,7 @@ async def how_are_you(message: Message):
 
 @router.message(Command('help'))
 async def command_help(message: Message):
-        await message.answer(f"Here is the list of commands:\n\n/stats - shows you statistic of your mevengi.\n/feed - used to feed your mevengi.\n/casino - shows you a list of commands for casino.\n/change_name - allows you to change your mevengi's name.\n/tap_tap - get easy money.\n/pet - pet Mevengi and make him happier.\n/bath - give your mevengi a bath.\n/bank - check your bank account.\n/inventory - manage your inventory.\n/shop - to buy things for your mevengi.")
+        await message.answer(f"Here is the list of commands:\n\n📈/stats - shows you statistic of your mevengi.\n\n🍽️/feed - used to feed your mevengi.\n\n🎲/casino - shows you a list of commands for casino.\n\n/change_name - allows you to change your mevengi's name.\n\n👆/tap_tap - get easy money.\n\n😃/pet - pet Mevengi and make him happier.\n\n🚿/bath - give your mevengi a bath.\n\n🏦/bank - check your bank account.\n\n🎒/inventory - manage your inventory.\n\n🛒/shop - to buy things for your mevengi.")
 
 
 
