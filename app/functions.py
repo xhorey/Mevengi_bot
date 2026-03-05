@@ -31,7 +31,7 @@ def save_data(data):
 
 #!!! SATIETY AND HYGIENE UPDATE !!!
 
-async def time_updates(message: Message, is_bathing):
+async def time_updates(message: Message, is_bathing, notify):
      mevengi_data = load_data()
      chat_id = str(message.chat.id)
      now = time.time()
@@ -59,9 +59,12 @@ async def time_updates(message: Message, is_bathing):
           mevengi_data[chat_id]['hygiene_number'] = 0
 
      if int(mevengi_data[chat_id]['satiety']) < 30:
-        await message.answer("Your Mevengi is hungry  and gets sad...")
-        if mevengi_data[chat_id]['happiness']>0:
-            mevengi_data[chat_id]['happiness'] -= 5
+        if notify:
+          await message.answer("Your Mevengi is hungry  and gets sad...")
+          if mevengi_data[chat_id]['happiness']>0:
+               mevengi_data[chat_id]['happiness'] -= 5
+               if mevengi_data[chat_id]['happiness']<0:
+                    mevengi_data[chat_id]['happiness'] = 0
 
      if 80 <= mevengi_data[chat_id]['hygiene_number'] <= 100:
           mevengi_data[chat_id]['hygiene_status'] = 'Perfectly clean'

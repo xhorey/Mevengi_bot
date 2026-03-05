@@ -24,7 +24,7 @@ async def command_casino(message: Message):
          await message.answer('You need level 2 to access this function :)') 
          return     
     
-    await time_updates(message, False)
+    await time_updates(message, False, True)
     await message.answer(f"Casino commands:\n\n/lottery - shows you lottery rules.\n/number_guess - shows you number guessing rules.\n/paper_scissors_rock - shows you paper-scissors-rock rules.")
 
 
@@ -38,7 +38,7 @@ async def command_lottery(message: Message):
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
         
-        await time_updates(message, False)
+        await time_updates(message, False, True)
 
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
@@ -55,7 +55,7 @@ async def play_lottery(message: Message):
          await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
          return
 
-    await time_updates(message, False)
+    await time_updates(message, False, True)
 
     if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
@@ -98,7 +98,7 @@ async def command_number(message: Message):
         if chat_id not in mevengi_data:
             await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
             return
-        await time_updates(message, False)
+        await time_updates(message, False, True)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -113,7 +113,7 @@ async def play_number(message: Message, state: FSMContext):
         if chat_id not in mevengi_data:
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
-        await time_updates(message, False)
+        await time_updates(message, False, True)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -131,7 +131,7 @@ async def guess_game(message: Message, state: FSMContext):
         await state.clear()
         await message.answer("You exited the game! You can use /help if needed.")
         return
-     await time_updates(message, False)
+     await time_updates(message, False, True)
      mevengi_data = load_data()
      if message.text.isdigit():
                 bet_money = int(message.text)
@@ -153,7 +153,7 @@ async def guess_game(message: Message, state: FSMContext):
 @router_casino.message(NumberGuess.guess)
 async def guess_game_stage2(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
-    await time_updates(message, False)
+    await time_updates(message, False, True)
     mevengi_data = load_data()
     fsm_data = await state.get_data()
     if message.text.isdigit() and 1 <= int(message.text) <= 3:
@@ -198,7 +198,7 @@ async def paper_scissors_rock_rules(message: Message):
         if chat_id not in mevengi_data:
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
-        await time_updates(message, False)
+        await time_updates(message, False, True)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -211,7 +211,7 @@ async def play_psr(message: Message, state: FSMContext):
         if chat_id not in mevengi_data:
             await message.answer("This chat has no Mevengi yet. Use /create to create one!")
             return
-        await time_updates(message, False)
+        await time_updates(message, False, True)
         if mevengi_data[chat_id]['casino_locker']:
          await message.answer('You need level 2 to access this function :)') 
          return  
@@ -222,7 +222,7 @@ async def play_psr(message: Message, state: FSMContext):
 @router_casino.message(PaperScissorsRock.bet)
 async def bet_psr(message: Message, state: FSMContext):
      chat_id = str(message.chat.id)
-     await time_updates(message, False)
+     await time_updates(message, False, True)
      mevengi_data = load_data()
      if message.text.lower() == 'exit':
         await state.clear()
@@ -248,7 +248,7 @@ async def bet_psr(message: Message, state: FSMContext):
 @router_casino.message(PaperScissorsRock.choice)
 async def guess_game_stage2(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
-    await time_updates(message, False)
+    await time_updates(message, False, True)
     mevengi_data = load_data()
     fsm_data = await state.get_data()
 

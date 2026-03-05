@@ -19,7 +19,7 @@ async def inventory(message: Message):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
     
-    await time_updates(message, False)
+    await time_updates(message, False, True)
 
     mevengi_data = load_data() 
 
@@ -43,7 +43,7 @@ async def shop(message: Message):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
     
-    await time_updates(message, False)
+    await time_updates(message, False, False)
 
     mevengi_data = load_data() 
 
@@ -60,7 +60,7 @@ async def food_buy(message: Message, state: FSMContext):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
     
-    await time_updates(message, False)
+    await time_updates(message, False, False)
 
     mevengi_data = load_data() 
 
@@ -72,7 +72,7 @@ async def food_buy(message: Message, state: FSMContext):
 
 @router_shopinventory.message(Shopping.product)
 async def food_buy(message: Message, state: FSMContext):
-    await time_updates(message, False)
+    await time_updates(message, False, False)
     mevengi_data = load_data() 
 
     if message.text.lower() == 'exit':
@@ -97,7 +97,7 @@ async def food_buy(message: Message, state: FSMContext):
 @router_shopinventory.message(Shopping.quantity)
 async def food_buy(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
-    await time_updates(message, False)
+    await time_updates(message, False, False)
     mevengi_data = load_data() 
 
     if message.text.lower() == 'exit':

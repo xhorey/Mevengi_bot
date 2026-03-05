@@ -51,7 +51,7 @@ async def upgrade_tap_tap(message: Message, state: FSMContext):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
     
-    await time_updates(message, False)
+    await time_updates(message, False, True)
 
     mevengi_data = load_data() 
 
@@ -75,7 +75,7 @@ async def upgrade_tap_tap(message: Message, state: FSMContext):
 async def upgrade_tap_tap(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
     
-    await time_updates(message, False)
+    await time_updates(message, False, True)
 
     mevengi_data = load_data() 
 

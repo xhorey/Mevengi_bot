@@ -2,7 +2,8 @@ from aiogram import F, Router, html
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from app.functions import save_data, load_data, time_updates
+from app.functions import save_data, load_data, time_updates, inventory_show
+from app.classes import Feeding
 
 
 
@@ -14,29 +15,74 @@ router_treatment = Router()
 #!!! FEED !!!
 
 @router_treatment.message(Command('feed'))
-async def show_stats(message: Message):
+async def feed(message: Message, state: FSMContext):
     chat_id = str(message.chat.id)
     mevengi_data = load_data()
 
-    
     if chat_id not in mevengi_data:
-        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
+        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
+    
+    await time_updates(message, False, False)
 
-    if mevengi_data[chat_id]['satiety'] >= 100:
-        await message.answer("Your mevengi is not hungry!")
+    mevengi_data = load_data() 
+
+    if not mevengi_data[chat_id]['inventory']:
+        await message.answer(f"Your inventory is empty right now!\nYou can use /shop to buy some food.")
         return
+    
+    inventory = inventory_show(message)
+    
+    await message.answer(f"Your inventory: \n{inventory}\nEnter the name of food you wanna use to feed Mevengi with.")
+
+    await state.set_state(Feeding.food)
+
+    save_data(mevengi_data)
+
         
 
-    if int(mevengi_data[chat_id]['money']) >= 10:
-        new_money = int(mevengi_data[chat_id]['money']) - 10
-        mevengi_data[chat_id]['money'] = str(new_money)
-        mevengi_data[chat_id]["satiety"] += 10
-        await message.answer(
-            f"You fed the Mevengi! 💖\n"
-            f"Balance left: ${mevengi_data[chat_id]['money']}\n"
-            f"Satiety: {int(mevengi_data[chat_id]['satiety'])}"
-        )
+@router_treatment.message(Feeding.food)
+async def choice_food(message: Message, state: FSMContext):
+    chat_id = str(message.chat.id)
+    await time_updates(message, False, False)
+    mevengi_data = load_data()
+    if message.text.lower() == 'exit':
+        await state.clear()
+        await message.answer("You exited the feeding state! You can use /help if needed.")
+        return
+    
+    if message.text.lower() in mevengi_data[chat_id]['inventory']:
+        choice = message.text.lower()
+        match choice:
+            case "burgers":
+                mevengi_data[chat_id]['inventory']['burgers'] -= 1
+                if mevengi_data[chat_id]['inventory']['burgers'] == 0:
+                    mevengi_data[chat_id]['inventory'].pop("burgers")
+
+                mevengi_data[chat_id]['satiety'] += 10
+
+
+            case "salads":
+                mevengi_data[chat_id]['inventory']['salads'] -= 1
+                if mevengi_data[chat_id]['inventory']['salads'] == 0:
+                    mevengi_data[chat_id]['inventory'].pop("salads")
+
+                mevengi_data[chat_id]['satiety'] += 10
+
+            case "coka-locas":
+                mevengi_data[chat_id]['inventory']['coka-locas'] -= 1
+                if mevengi_data[chat_id]['inventory']['coka-locas'] == 0:
+                    mevengi_data[chat_id]['inventory'].pop("coka-locas")
+
+                mevengi_data[chat_id]['satiety'] += 3
+
+            case "pizzas":
+                mevengi_data[chat_id]['inventory']['pizzas'] -= 1
+                if mevengi_data[chat_id]['inventory']['pizzas'] == 0:
+                    mevengi_data[chat_id]['inventory'].pop("pizzas")
+
+                mevengi_data[chat_id]['satiety'] += 25
+
         level_up = int(mevengi_data[chat_id]['level_up']) + 10
         
         if level_up >= 100:
@@ -52,10 +98,15 @@ async def show_stats(message: Message):
                 await message.answer("You have unlocked bank now!") 
 
         mevengi_data[chat_id]['level_up'] = str(level_up)
-
+        
+        await message.answer(
+            f"You fed the Mevengi! 💖\n"
+            f"Satiety: {int(mevengi_data[chat_id]['satiety'])}"
+        )
+        await state.clear()
         save_data(mevengi_data)
     else:
-        await message.answer("Seems like you are too poor for this...")
+        await message.answer("Enter valid option or 'exit' to exit this menu!")
 
 
 
@@ -69,12 +120,16 @@ async def petting(message: Message):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
     
-    await time_updates(message, False)
+    await time_updates(message, False, True)
 
     mevengi_data = load_data() 
 
     if mevengi_data[chat_id]['happiness'] < 100:
         mevengi_data[chat_id]['happiness'] += 2
+        
+    if mevengi_data[chat_id]['happiness'] > 100:
+            mevengi_data[chat_id]['happiness'] = 100
+
 
     await message.answer(f"You pet your Mevengi <3\nHappiness: {mevengi_data[chat_id]['happiness']}", parse_mode=None)
     
@@ -93,7 +148,7 @@ async def petting(message: Message):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
     
-    await time_updates(message, True)
+    await time_updates(message, True, True)
 
     mevengi_data = load_data()
 

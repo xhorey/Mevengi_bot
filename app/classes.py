@@ -37,3 +37,6 @@ class Banking(StatesGroup):
 class Shopping(StatesGroup):
     product = State()
     quantity = State()
+
+class Feeding(StatesGroup):
+    food = State()

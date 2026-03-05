@@ -116,7 +116,7 @@ async def show_stats(message: Message):
         await message.answer("This chat has no Mevengi yet. Use /create to create one!")
         return
 
-    await time_updates(message, False)
+    await time_updates(message, False, True)
     mevengi_data = load_data()
 
     await message.answer(
@@ -169,7 +169,7 @@ async def name_change_request(message: Message, state: FSMContext):
         await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
         return
     
-    await time_updates(message, True)
+    await time_updates(message, False, True)
     mevengi_data = load_data()
 
     if int(mevengi_data[chat_id]['money']) <= 200:
