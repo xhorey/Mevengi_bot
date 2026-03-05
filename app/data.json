@@ -1,11 +1,4 @@
 {
-    "-5262734939": {
-        "id": "-5262734939",
-        "name": "Gege",
-        "age": 1,
-        "money": "110",
-        "level_up": "0"
-    },
     "-5125942431": {
         "id": "-5125942431",
         "name": "fg",
@@ -27,6 +20,27 @@
             "burgers": 19,
             "pizzas": 88,
             "salads": 23
+        }
+    },
+    "-5235788516": {
+        "id": "-5235788516",
+        "name": "Miverga",
+        "level": 1,
+        "money": "9",
+        "level_up": "40",
+        "satiety": 81.11612861355145,
+        "happiness": 100,
+        "last_update": 1772754540.2606635,
+        "hygiene_status": "Perfectly clean",
+        "hygiene_number": 96.36219130059082,
+        "casino_locker": true,
+        "tap_tap_lvl": 2,
+        "bank_locker": true,
+        "bank_money": 0,
+        "deposit_counter": 0,
+        "deposited": false,
+        "inventory": {
+            "coka-locas": 5
         }
     }
 }

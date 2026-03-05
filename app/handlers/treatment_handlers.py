@@ -33,7 +33,7 @@ async def feed(message: Message, state: FSMContext):
     
     inventory = inventory_show(message)
     
-    await message.answer(f"🎒Your inventory: \n{inventory}\nEnter the name of food you wanna use to feed Mevengi with.")
+    await message.answer(f"🎒Your inventory: \n\n{inventory}\nEnter the name of food you wanna use to feed Mevengi with.")
 
     await state.set_state(Feeding.food)
 

@@ -165,5 +165,6 @@ async def food_buy(message: Message, state: FSMContext):
     else:
                 await message.answer("Enter valid option.")
     
+    await state.clear()
 
     save_data(mevengi_data)
