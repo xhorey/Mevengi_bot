@@ -1,9 +1,10 @@
-from aiogram import F, Router, html
+from aiogram import F, Router, html, types
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from app.functions import save_data, load_data, time_updates, find_price
 from app.classes import TapUpgrade
+from keyboards import tapalka
 
 
 
@@ -22,6 +23,17 @@ async def show_stats(message: Message):
     if chat_id not in mevengi_data:
         await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
         return
+    
+    await message.answer("You can start tapping!", reply_markup=tapalka)
+    save_data(mevengi_data)
+
+
+@router_tap.callback_query(F.data == "tap_tap")
+async def tap_money(callback: types.CallbackQuery):
+    chat_id = str(callback.message.chat.id)
+    mevengi_data = load_data()
+
+
     if mevengi_data[chat_id]['tap_tap_lvl'] == 1:
         money = int(mevengi_data[chat_id]['money']) + 5
         earning = 5
@@ -38,7 +50,8 @@ async def show_stats(message: Message):
         money = int(mevengi_data[chat_id]['money']) + 50
         earning = 50
     mevengi_data[chat_id]['money'] = str(money)
-    await message.answer(f"You tapped and earned ${earning}🤑 \nYour balance now is 💵: ${mevengi_data[chat_id]['money']}.\nCurrent level of tap-tap: {mevengi_data[chat_id]['tap_tap_lvl']}. \nTo upgrade it use ⏫/upgrade_tap.")
+
+    await callback.message.edit_text(f"You tapped and earned ${earning}🤑 \nYour balance now is 💵: ${mevengi_data[chat_id]['money']}.\nCurrent level of tap-tap: {mevengi_data[chat_id]['tap_tap_lvl']}. \nTo upgrade it use ⏫/upgrade_tap.", reply_markup=tapalka)
 
     save_data(mevengi_data)
 
