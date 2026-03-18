@@ -6,6 +6,7 @@ import time
 import random
 
 from app.classes import Banking
+from keyboards import feed_keyboard, bath_keyboard
 
 
 
@@ -60,7 +61,7 @@ async def time_updates(message: Message, is_bathing, notify):
 
      if int(mevengi_data[chat_id]['satiety']) < 30:
         if notify:
-          await message.answer("Your Mevengi is hungry  and gets sad 💔")
+          await message.answer("Your Mevengi is hungry  and gets sad 💔", reply_markup=feed_keyboard)
           if mevengi_data[chat_id]['happiness']>0:
                mevengi_data[chat_id]['happiness'] -= 5
                if mevengi_data[chat_id]['happiness']<0:
@@ -75,11 +76,11 @@ async def time_updates(message: Message, is_bathing, notify):
      elif 20 <= mevengi_data[chat_id]['hygiene_number'] < 40:
           mevengi_data[chat_id]['hygiene_status'] = 'Stinks'
           if is_bathing == False:
-               await message.answer("Your Mevengi stinks 🫢! It's better to give it some bath as soon as possible!")
+               await message.answer("Your Mevengi stinks 🫢! It's better to give it some bath as soon as possible!", reply_markup=bath_keyboard)
      else:
           mevengi_data[chat_id]['hygiene_status'] = 'Horrible'
           if is_bathing == False:
-               await message.answer("Your Mevengi stinks so bad 🤢! Give it some bath NOW!!!")
+               await message.answer("Your Mevengi stinks so bad 🤢! Give it some bath NOW!!!", reply_markup=bath_keyboard)
 
 
      mevengi_data[chat_id]['last_update'] = now

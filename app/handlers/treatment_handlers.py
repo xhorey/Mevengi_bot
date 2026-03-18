@@ -1,6 +1,6 @@
-from aiogram import F, Router, html
+from aiogram import F, Router, html, types
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from app.functions import save_data, load_data, time_updates, inventory_show
 from app.classes import Feeding
@@ -39,7 +39,30 @@ async def feed(message: Message, state: FSMContext):
 
     save_data(mevengi_data)
 
-        
+@router_treatment.callback_query(F.data == 'feed')
+async def feed(callback: types.CallbackQuery, state: FSMContext):
+    chat_id = str(callback.message.chat.id)
+    mevengi_data = load_data()
+
+    if chat_id not in mevengi_data:
+        await callback.message.answer("This chat has no Mevengi yet. Use /create to create one!")
+        return
+    
+    await time_updates(callback.message, False, False)
+
+    mevengi_data = load_data() 
+
+    if not mevengi_data[chat_id]['inventory']:
+        await callback.message.answer(f"Your inventory is empty right now!\nYou can use /shop to buy some food.")
+        return
+    
+    inventory = inventory_show(callback.message)
+    
+    await callback.message.answer(f"🎒Your inventory: \n\n{inventory}\nEnter the name of food you wanna use to feed Mevengi with.")
+
+    await state.set_state(Feeding.food)
+
+    save_data(mevengi_data)    
 
 @router_treatment.message(Feeding.food)
 async def choice_food(message: Message, state: FSMContext):
@@ -174,3 +197,36 @@ async def petting(message: Message):
 
     save_data(mevengi_data)
 
+@router_treatment.callback_query(F.data == 'bath')
+async def petting(callback: types.CallbackQuery):
+    chat_id = str(callback.message.chat.id)
+    mevengi_data = load_data()  
+    if chat_id not in mevengi_data:
+        await callback.message.answer("This chat has no Mevengi yet. Use /create to create one!")
+        return
+    
+    await time_updates(callback.message, True, True)
+
+    mevengi_data = load_data()
+
+    mevengi_data[chat_id]['hygiene_number'] += 15
+    save_data(mevengi_data)
+
+    if mevengi_data[chat_id]['hygiene_number'] > 100:
+       mevengi_data[chat_id]['hygiene_number'] = 100 
+
+    if 80 <= mevengi_data[chat_id]['hygiene_number'] <= 100:
+          mevengi_data[chat_id]['hygiene_status'] = 'Perfectly clean'
+    elif 60 <= mevengi_data[chat_id]['hygiene_number'] < 80:
+          mevengi_data[chat_id]['hygiene_status'] = 'Good'
+    elif 40 <= mevengi_data[chat_id]['hygiene_number'] < 60:
+          mevengi_data[chat_id]['hygiene_status'] = 'A bit sweaty'
+    elif 20 <= mevengi_data[chat_id]['hygiene_number'] < 40:
+          mevengi_data[chat_id]['hygiene_status'] = 'Stinks'
+    else:
+          mevengi_data[chat_id]['hygiene_status'] = 'Horrible'
+
+    await callback.message.answer(f"You washed your Mevengi 🧼!\nNow it's hygiene status is: {mevengi_data[chat_id]['hygiene_status']}.")
+    
+
+    save_data(mevengi_data)
