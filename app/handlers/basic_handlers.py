@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 import time
 from app.functions import save_data, load_data, time_updates, get_emoji_state
 from app.classes import Mevengi, Creation, NameChange
+from keyboards import menu_kb
 
 
 
@@ -193,3 +194,16 @@ async def change_name(message: Message, state: FSMContext):
     await message.answer("You successfully changed your mevengi's name!")
     await state.clear()
 
+@router.message(Command('menu'))
+async def main_menu(message: Message, state: FSMContext):
+    chat_id = str(message.chat.id)
+    mevengi_data = load_data()
+
+    if chat_id not in mevengi_data:
+        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
+        return
+    
+    await time_updates(message, False, True)
+    mevengi_data = load_data()
+
+    await message.answer(f"{html.bold("MENU")}", reply_markup=menu_kb)
