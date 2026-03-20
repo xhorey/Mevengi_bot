@@ -1,11 +1,11 @@
-from aiogram import F, Router, html
+from aiogram import F, Router, html, types
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 import time
 from app.functions import save_data, load_data, time_updates, get_emoji_state
 from app.classes import Mevengi, Creation, NameChange
-from keyboards import menu_kb
+from keyboards import menu_kb, menu_redirect
 
 
 
@@ -106,27 +106,21 @@ async def delete_mevengi(message: Message):
 
 #!!! STATS !!!
 
-@router.message(Command('stats'))
-async def show_stats(message: Message):
-    chat_id = str(message.chat.id)
+@router.callback_query(F.data == 'stats')
+async def stats(callback: types.CallbackQuery, state: FSMContext):
+    chat_id = str(callback.message.chat.id)
+    await time_updates(callback.message, False, True)
     mevengi_data = load_data()
 
+    emoji = get_emoji_state(callback.message)
 
-
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-
-    await time_updates(message, False, True)
-    mevengi_data = load_data()
-    emoji = get_emoji_state(message)
-    await message.answer(
+    await callback.message.edit_text(
         f"{html.bold("YOUR MEVENGI")} 🐶\n\n"
         f"{html.bold("Name")}: {mevengi_data[chat_id]['name']}\n"
         f"{html.bold("Level")} 📶: {mevengi_data[chat_id]['level']}\n"
         f"{html.bold("Money")} 💵: ${mevengi_data[chat_id]['money']}\n"
         f"{html.bold("Satiety")} 🍴: {int(mevengi_data[chat_id]['satiety'])}\n"
-        f"{html.bold("Happiness")} {emoji}: {mevengi_data[chat_id]['happiness']}\n{html.bold("Hygiene status")} 🛁: {mevengi_data[chat_id]['hygiene_status']}\n{html.bold("Tap tap level")} 👆: {mevengi_data[chat_id]['tap_tap_lvl']}\n{html.bold("Money on bank account")} 💳: ${int(mevengi_data[chat_id]['bank_money'])}"
+        f"{html.bold("Happiness")} {emoji}: {mevengi_data[chat_id]['happiness']}\n{html.bold("Hygiene status")} 🛁: {mevengi_data[chat_id]['hygiene_status']}\n{html.bold("Tap tap level")} 👆: {mevengi_data[chat_id]['tap_tap_lvl']}\n{html.bold("Money on bank account")} 💳: ${int(mevengi_data[chat_id]['bank_money'])}", reply_markup=menu_redirect
     )
 
 
@@ -195,7 +189,7 @@ async def change_name(message: Message, state: FSMContext):
     await state.clear()
 
 @router.message(Command('menu'))
-async def main_menu(message: Message, state: FSMContext):
+async def main_menu(message: Message):
     chat_id = str(message.chat.id)
     mevengi_data = load_data()
 
@@ -207,3 +201,12 @@ async def main_menu(message: Message, state: FSMContext):
     mevengi_data = load_data()
 
     await message.answer(f"{html.bold("MENU")}", reply_markup=menu_kb)
+
+
+
+@router.callback_query(F.data == 'menu')
+async def main_menu(callback: types.CallbackQuery):
+    
+    await time_updates(callback.message, False, True)
+
+    await callback.message.edit_text(f"{html.bold("MENU")}", reply_markup=menu_kb)

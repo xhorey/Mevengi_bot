@@ -1,9 +1,10 @@
-from aiogram import F, Router, html
+from aiogram import F, Router, html, types
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from app.functions import save_data, load_data, time_updates, inventory_show
 from app.classes import Shopping
+from keyboards import menu_redirect, shop_kb, back_shop_kb
 
 router_shopinventory = Router()
 
@@ -35,36 +36,24 @@ async def inventory(message: Message):
 
 
 
-@router_shopinventory.message(Command('shop'))
-async def shop(message: Message):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()  
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-    
-    await time_updates(message, False, False)
-
+@router_shopinventory.callback_query(F.data == 'shop')
+async def shop(callback: types.CallbackQuery):
+    chat_id = str(callback.message.chat.id)
+    await time_updates(callback.message, False, False)
     mevengi_data = load_data() 
 
-    await message.answer(f"Your balance 💵: ${mevengi_data[chat_id]['money']}.\n\n🍴/food - see the food list.")
+    await callback.message.edit_text(f"Your balance 💵: ${mevengi_data[chat_id]['money']}.", reply_markup=shop_kb)
     
     save_data(mevengi_data)
 
 
-@router_shopinventory.message(Command('food'))
-async def food_buy(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()  
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-    
-    await time_updates(message, False, False)
-
+@router_shopinventory.callback_query(F.data == 'food')
+async def food_buy(callback: types.CallbackQuery, state: FSMContext):
+    chat_id = str(callback.message.chat.id)
+    await time_updates(callback.message, False, False)
     mevengi_data = load_data() 
 
-    await message.answer(f"Available products to buy:\n\n1. Burger(🍗: 10 💲: 7)\n2. Pizza(🍗: 25 💲: 15)\n3. Salad(🍗: 10 💲: 9)\n4. Coca-loca(🍗: 3 💲: 3)\n\nEnter the number of product you wanna buy, or 'exit' to exit menu.")
+    await callback.message.edit_text(f"Available products to buy:\n\n1. Burger(🍗: 10 💲: 7)\n2. Pizza(🍗: 25 💲: 15)\n3. Salad(🍗: 10 💲: 9)\n4. Coca-loca(🍗: 3 💲: 3)\n\nEnter the number of product you wanna buy, or 'exit' to exit menu.")
     
     await state.set_state(Shopping.product)
 
@@ -77,7 +66,7 @@ async def food_buy(message: Message, state: FSMContext):
 
     if message.text.lower() == 'exit':
         await state.clear()
-        await message.answer("You exited the menu! You can use /help if needed.")
+        await message.answer("You exited the food section!", reply_markup=back_shop_kb)
         return
      
      
@@ -102,7 +91,7 @@ async def food_buy(message: Message, state: FSMContext):
 
     if message.text.lower() == 'exit':
         await state.clear()
-        await message.answer("You exited the menu! You can use /help if needed.")
+        await message.answer("You exited the food section!", reply_markup=back_shop_kb)
         return
     
     if message.text.lower() == '/back':
@@ -159,7 +148,7 @@ async def food_buy(message: Message, state: FSMContext):
                         else:
                             mevengi_data[chat_id]['inventory']['coka-locas'] += quantity 
                 
-                await message.answer(f"You successfully purchased {quantity} of {name_product}!")
+                await message.answer(f"You successfully purchased {quantity} of {name_product}!", reply_markup=back_shop_kb)
 
                 
     else:

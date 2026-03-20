@@ -4,7 +4,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from app.functions import save_data, load_data, time_updates, find_price
 from app.classes import TapUpgrade
-from keyboards import tapalka
+from keyboards import tapalka, tapalka_back
 
 
 
@@ -13,20 +13,6 @@ from keyboards import tapalka
 router_tap = Router()
 
 #!!! TAP-TAP !!!
-
-
-@router_tap.message(Command('tap_tap'))
-async def show_stats(message: Message):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()
-
-    if chat_id not in mevengi_data:
-        await message.answer("Seems like you have no mevengis yet. Use /create to create one!")
-        return
-    
-    await message.answer("You can start tapping!", reply_markup=tapalka)
-    save_data(mevengi_data)
-
 
 @router_tap.callback_query(F.data == "tap_tap")
 async def tap_money(callback: types.CallbackQuery):
@@ -51,34 +37,28 @@ async def tap_money(callback: types.CallbackQuery):
         earning = 50
     mevengi_data[chat_id]['money'] = str(money)
 
-    await callback.message.edit_text(f"You tapped and earned ${earning}🤑 \nYour balance now is 💵: ${mevengi_data[chat_id]['money']}.\nCurrent level of tap-tap: {mevengi_data[chat_id]['tap_tap_lvl']}. \nTo upgrade it use ⏫/upgrade_tap.", reply_markup=tapalka)
+    await callback.message.edit_text(f"You tapped and earned ${earning}🤑 \nYour balance now is 💵: ${mevengi_data[chat_id]['money']}.\nCurrent level of tap-tap: {mevengi_data[chat_id]['tap_tap_lvl']}.", reply_markup=tapalka)
 
     save_data(mevengi_data)
 
 
-@router_tap.message(Command('upgrade_tap'))
-async def upgrade_tap_tap(message: Message, state: FSMContext):
-    chat_id = str(message.chat.id)
-    mevengi_data = load_data()  
-    if chat_id not in mevengi_data:
-        await message.answer("This chat has no Mevengi yet. Use /create to create one!")
-        return
-    
-    await time_updates(message, False, True)
-
+@router_tap.callback_query(F.data == "upgrade_tap")
+async def tap_money(callback: types.CallbackQuery, state: FSMContext):
+    chat_id = str(callback.message.chat.id)
+    await time_updates(callback.message, False, True)
     mevengi_data = load_data() 
 
     if mevengi_data[chat_id]['tap_tap_lvl'] == 5:
-        await message.answer("You already have highest possible tap_tap level!")
+        await callback.message.edit_text("You already have highest possible tap_tap level!", reply_markup=tapalka_back)
         return
 
-    price_upgrade = find_price(message)
+    price_upgrade = find_price(callback.message)
 
     if int(mevengi_data[chat_id]['money']) < price_upgrade:
-         await message.answer(f"Upgrade costs ${price_upgrade}. You have not enough money!")
+         await callback.message.edit_text(f"Upgrade costs ${price_upgrade}. You have not enough money!", reply_markup=tapalka_back)
          return
     
-    await message.answer(f"Upgrade costs ${price_upgrade}. Want to purchase?(type Yes for purchase and No for declining)")
+    await callback.message.edit_text(f"Upgrade costs ${price_upgrade}. Want to purchase?(type Yes for purchase and No for declining)")
     
     await state.set_state(TapUpgrade.choice)
     
@@ -102,7 +82,7 @@ async def upgrade_tap_tap(message: Message, state: FSMContext):
 
         mevengi_data[chat_id]['tap_tap_lvl'] += 1
 
-        await message.answer(f"🆙You have upgraded tap_tap!🆙\nNew level is: {mevengi_data[chat_id]['tap_tap_lvl']}.")
+        await message.answer(f"🆙You have upgraded tap_tap!🆙\nNew level is: {mevengi_data[chat_id]['tap_tap_lvl']}.", reply_markup=tapalka_back)
         save_data(mevengi_data)
         await state.clear()
         
@@ -110,7 +90,7 @@ async def upgrade_tap_tap(message: Message, state: FSMContext):
     
     if message.text.lower() == 'no':
 
-        await message.answer(f"Ok. You exited upgrading menu. Use /help if needed.")
+        await message.answer(f"Ok. You exited upgrading menu. Use /help if needed.", reply_markup=tapalka_back)
         save_data(mevengi_data)
         await state.clear()
         
