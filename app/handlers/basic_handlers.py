@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 import time
 from app.functions import save_data, load_data, time_updates, get_emoji_state
 from app.classes import Mevengi, Creation, NameChange
-from keyboards import menu_kb, menu_redirect
+from keyboards import menu_kb, menu_redirect, go_to_menu, go_to_menu_lt
 
 
 
@@ -37,7 +37,7 @@ async def command_create(message: Message, state: FSMContext):
     data = load_data()
         
     if chat_id in data:
-        await message.answer("Seems like you already have mevengi, use commands to interact with it =). For command list use /help if you need.")
+        await message.answer("Seems like you already have mevengi =). For guide use /help if you need.")
     else:
         await state.set_state(Creation.name)
         await message.answer("Type in new Mevengi name")
@@ -86,7 +86,7 @@ async def command_create_second_stage(message: Message, state: FSMContext):
         f"Level 📶: {mevengi.level}\n"
         f"Money 💵: {mevengi.money}\n"
         f"Satiety 🍴: {mevengi.satiety}\n"
-        f"Happiness 😁: {mevengi.happiness}\nHygiene status 🛁: {data[chat_id]['hygiene_status']}\n\nUse /help to see list of commands to interact with it XD"
+        f"Happiness 😁: {mevengi.happiness}\nHygiene status 🛁: {data[chat_id]['hygiene_status']}", reply_markup=go_to_menu
     )
 
     await state.clear()
@@ -133,7 +133,11 @@ async def how_are_you(message: Message):
 
 @router.message(Command('help'))
 async def command_help(message: Message):
-        await message.answer(f"Here is the list of commands:\n\n📈/stats - shows you statistic of your mevengi.\n\n🍽️/feed - used to feed your mevengi.\n\n🎲/casino - shows you a list of commands for casino.\n\n/change_name - allows you to change your mevengi's name.\n\n👆/tap_tap - get easy money.\n\n😃/pet - pet Mevengi and make him happier.\n\n🚿/bath - give your mevengi a bath.\n\n🏦/bank - check your bank account.\n\n🎒/inventory - manage your inventory.\n\n🛒/shop - to buy things for your mevengi.")
+        await message.answer(f"To go to this guide whenever you need it use /help. To open menu for interacting with your mevengi use /menu. Enjoy! 😊", reply_markup=go_to_menu_lt)
+
+@router.callback_query(F.data == 'help')
+async def command_help(callback: types.CallbackQuery):
+        await callback.message.edit_text(f"To go to this guide whenever you need it use /help. To open menu for interacting with your mevengi use /menu or button below. Enjoy! 😊", reply_markup=go_to_menu_lt)
 
 
 

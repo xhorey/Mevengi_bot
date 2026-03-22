@@ -55,6 +55,15 @@ menu_redirect = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Back to menu", callback_data="menu")]
 ])
 
+go_to_menu = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Go to menu", callback_data="menu")],
+    [InlineKeyboardButton(text="Guide", callback_data="help")]
+])
+
+go_to_menu_lt = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Go to menu", callback_data="menu")]
+])
+
 
 taking_care = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Feed", callback_data="feed"),

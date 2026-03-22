@@ -1,27 +1,4 @@
 {
-    "-5125942431": {
-        "id": "-5125942431",
-        "name": "fg",
-        "level": 7,
-        "money": "99942037",
-        "level_up": "70",
-        "satiety": 98.05697597463933,
-        "happiness": 95,
-        "last_update": 1773970844.3275616,
-        "hygiene_status": "Good",
-        "hygiene_number": 74.01226778725787,
-        "casino_locker": false,
-        "tap_tap_lvl": 5,
-        "bank_locker": false,
-        "bank_money": 1315154.518324756,
-        "deposit_counter": 3.2792498446835414,
-        "deposited": true,
-        "inventory": {
-            "burgers": 19,
-            "pizzas": 62,
-            "salads": 23
-        }
-    },
     "-5235788516": {
         "id": "-5235788516",
         "name": "Miverga",
@@ -44,5 +21,24 @@
             "burgers": 3,
             "pizzas": 50
         }
+    },
+    "-5125942431": {
+        "id": "-5125942431",
+        "name": "Rod",
+        "level": 1,
+        "money": 100,
+        "level_up": 0,
+        "satiety": 49.45168442527453,
+        "happiness": 100,
+        "last_update": 1774214299.47201,
+        "hygiene_status": "Perfectly clean",
+        "hygiene_number": 99.72584221263726,
+        "casino_locker": true,
+        "tap_tap_lvl": 1,
+        "bank_locker": true,
+        "bank_money": 0,
+        "deposit_counter": 0,
+        "deposited": false,
+        "inventory": {}
     }
 }
